@@ -98,7 +98,9 @@ void loop() {
 #endif
 
   StickCP2.Display.printf("Front: %d\r\n", front);
+  StickCP2.Display.printf("%4d ~ %4d\r\n", minFrontSensorVal, maxFrontSensorVal);
   StickCP2.Display.printf("Back: %d\r\n", back);
+  StickCP2.Display.printf("%4d ~ %4d\r\n", minBackSensorVal, maxBackSensorVal);
 
 #ifdef LEFT
   data[0] = LEFT_ID;
