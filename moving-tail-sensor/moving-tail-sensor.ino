@@ -14,7 +14,7 @@
 #define LEFT
 //#define RIGHT
 
-static WiFiUDP udp; 
+static WiFiUDP udp;
 static const char *remoteIp = "192.168.4.1";
 static const int remotePort = 10000;
 
@@ -23,6 +23,13 @@ enum SensorId {
   LEFT_ID,
   RIGHT_ID
 };
+
+
+uint16_t maxFrontSensorVal = 3000;
+uint16_t minFrontSensorVal = 0;
+
+uint16_t maxBackSensorVal = 3000;
+uint16_t minBackSensorVal = 0;
 
 
 void setup() {
@@ -43,20 +50,42 @@ void setup() {
   StickCP2.Display.printf("Right:\r\n");
 #endif
 
+  // キャリブレーション
+  maxFrontSensorVal = 0;
+  minFrontSensorVal = 3000;
+  maxBackSensorVal = 0;
+  minBackSensorVal = 3000;
+
+  for(uint16_t time = 0; time*100 < 3000 /*ms*/; time++ ){
+    uint16_t front = analogRead(G32);
+    uint16_t back = analogRead(G33);
+
+    maxFrontSensorVal = (maxFrontSensorVal > front) ? maxFrontSensorVal : front;
+    minFrontSensorVal = (minFrontSensorVal < front) ? minFrontSensorVal : front;
+    maxBackSensorVal = (maxBackSensorVal > back) ? maxBackSensorVal : back;
+    minBackSensorVal = (minBackSensorVal < back) ? minBackSensorVal : back;
+
+    delay(100);
+  }
+
+  // キャリブレーション終了ビープ音
+  StickCP2.Speaker.tone(4400, 1000);
+
+
   static const int localPort = 5000;
 
   WiFi.begin(ssid, pass);
-  while( WiFi.status() != WL_CONNECTED) {
-    delay(500);  
-  }  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
   udp.begin(localPort);
 }
 
 uint8_t data[5];
 
 void loop() {
-  uint16_t front = analogRead(G32);
-  uint16_t back = analogRead(G33);
+  uint16_t front = map(analogRead(G32), minFrontSensorVal, maxFrontSensorVal, 0, 3000);
+  uint16_t back = map(analogRead(G33), minBackSensorVal, maxBackSensorVal, 0, 3000);
 
 
   StickCP2.Display.setCursor(0, 40);
@@ -82,7 +111,7 @@ void loop() {
   data[4] = (back >> 8) & 0xff;
 
   udp.beginPacket(remoteIp, remotePort);
-  udp.write((const uint8_t *)data, 5); 
+  udp.write((const uint8_t *)data, 5);
   udp.endPacket();
 
   delay(100);

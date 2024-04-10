@@ -53,8 +53,8 @@ portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 void IRAM_ATTR onTimer1() {
   portENTER_CRITICAL_ISR(&timerMux);
 
-  int leftVal  = 3*left.front - map(left.back, 1800, 3000, 0, 3000);
-  int rightVal = 3*right.front - map(right.back, 1800, 3000, 0, 3000);
+  int leftVal  = 3*left.front - left.back;
+  int rightVal = 3*right.front - right.back;
 
   int currentYoko1arg = map(leftVal - rightVal, -6000, 6000, 60, 120);
   int currentYoko2arg = map(leftVal - rightVal, -6000, 6000, 60, 140);
