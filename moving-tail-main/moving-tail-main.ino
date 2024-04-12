@@ -17,9 +17,14 @@ const IPAddress subnet(255, 255, 255, 0);
 
 WiFiUDP udp;
 
-struct SensorData {
+struct SensorPosition {
   uint16_t front;
   uint16_t back;
+};
+
+struct Sensor {
+  SensorPosition left;
+  SensorPosition right;
 };
 
 enum SensorId {
@@ -29,8 +34,7 @@ enum SensorId {
 
 unsigned char data[5];
 
-volatile SensorData left = {};
-volatile SensorData right = {};
+volatile Sensor sensor = {};
 
 
 Servo yoko1, yoko2, tate1, tate2;
@@ -53,8 +57,8 @@ portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 void IRAM_ATTR onTimer1() {
   portENTER_CRITICAL_ISR(&timerMux);
 
-  int leftVal  = 3*left.front - left.back;
-  int rightVal = 3*right.front - right.back;
+  int leftVal  = 3*sensor.left.front - sensor.left.back;
+  int rightVal = 3*sensor.right.front - sensor.right.back;
 
   int currentYoko1arg = map(leftVal - rightVal, -6000, 6000, 60, 120);
   int currentYoko2arg = map(leftVal - rightVal, -6000, 6000, 60, 140);
@@ -116,11 +120,11 @@ void loop() {
     udp.read(data, 5);
 
     if (data[0] == LEFT) {
-      left.front = data[1] + (data[2] << 8);
-      left.back = data[3] + (data[4] << 8);
+      sensor.left.front = data[1] + (data[2] << 8);
+      sensor.left.back = data[3] + (data[4] << 8);
     } else {
-      right.front = data[1] + (data[2] << 8);
-      right.back = data[3] + (data[4] << 8);
+      sensor.right.front = data[1] + (data[2] << 8);
+      sensor.right.back = data[3] + (data[4] << 8);
     }
   }
 }
