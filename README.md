@@ -1,1 +1,1 @@
-# 動くしっぽ
+# 動くしっぽ (Artificial Tail)
