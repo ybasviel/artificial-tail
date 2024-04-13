@@ -42,17 +42,20 @@ void callibration() {
   maxBackSensorVal = 0;
   minBackSensorVal = 3000;
 
-  for (uint16_t time = 0; time * 100 < 3000 /*ms*/; time++) {
-    uint16_t front = analogRead(G32);
-    uint16_t back = analogRead(G33);
+  while(maxFrontSensorVal <= minFrontSensorVal || maxBackSensorVal <= minBackSensorVal){
+    for (uint16_t time = 0; time * 100 < 3000 /*ms*/; time++) {
+      uint16_t front = analogRead(G32);
+      uint16_t back = analogRead(G33);
 
-    maxFrontSensorVal = (maxFrontSensorVal > front) ? maxFrontSensorVal : front;
-    minFrontSensorVal = (minFrontSensorVal < front) ? minFrontSensorVal : front;
-    maxBackSensorVal = (maxBackSensorVal > back) ? maxBackSensorVal : back;
-    minBackSensorVal = (minBackSensorVal < back) ? minBackSensorVal : back;
+      maxFrontSensorVal = (maxFrontSensorVal > front) ? maxFrontSensorVal : front;
+      minFrontSensorVal = (minFrontSensorVal < front) ? minFrontSensorVal : front;
+      maxBackSensorVal = (maxBackSensorVal > back) ? maxBackSensorVal : back;
+      minBackSensorVal = (minBackSensorVal < back) ? minBackSensorVal : back;
 
-    delay(100);
+      delay(100);
+    }
   }
+
 
   // キャリブレーション終了ビープ音
   StickCP2.Speaker.tone(4400, 500);
@@ -69,11 +72,13 @@ void setup() {
 
   StickCP2.Display.setCursor(0, 40);
   StickCP2.Display.clear();
+  
+  int32_t batteryPercentage = StickCP2.Power.getBatteryLevel();
 
 #ifdef LEFT
-  StickCP2.Display.printf("Left:\r\n");
+  StickCP2.Display.printf("Left: %d\r\n", batteryPercentage);
 #else
-  StickCP2.Display.printf("Right:\r\n");
+  StickCP2.Display.printf("Right: %d\r\n", batteryPercentage);
 #endif
 
   static const int localPort = 5000;
@@ -99,14 +104,18 @@ void loop() {
     uint16_t front = map(analogRead(G32), minFrontSensorVal, maxFrontSensorVal, 0, 3000);
     uint16_t back = map(analogRead(G33), minBackSensorVal, maxBackSensorVal, 0, 3000);
 
+    if(front > 3000) front = 3000;
+    if(back > 3000) back = 3000;
 
     StickCP2.Display.setCursor(0, 40);
     StickCP2.Display.clear();
 
+    int32_t batteryPercentage = StickCP2.Power.getBatteryLevel();
+
 #ifdef LEFT
-    StickCP2.Display.printf("Left:\r\n");
+    StickCP2.Display.printf("Left: %d%\r\n", batteryPercentage);
 #else
-    StickCP2.Display.printf("Right:\r\n");
+    StickCP2.Display.printf("Right: %d\r\n", batteryPercentage);
 #endif
 
     StickCP2.Display.printf("Front: %d\r\n", front);
