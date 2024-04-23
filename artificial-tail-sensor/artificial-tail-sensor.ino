@@ -86,6 +86,18 @@ void setup() {
   WiFi.begin(ssid, pass);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
+
+    StickCP2.update();
+    StickCP2.Display.setCursor(0, 40);
+    StickCP2.Display.clear();
+  
+    int32_t batteryPercentage = StickCP2.Power.getBatteryLevel();
+
+#ifdef LEFT
+    StickCP2.Display.printf("Left: %d\r\n", batteryPercentage);
+#else
+    StickCP2.Display.printf("Right: %d\r\n", batteryPercentage);
+#endif
   }
   udp.begin(localPort);
 
