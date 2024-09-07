@@ -60,10 +60,10 @@ void IRAM_ATTR onTimer1() {
   int leftVal  = 3*sensor.left.front - sensor.left.back;
   int rightVal = 3*sensor.right.front - sensor.right.back;
 
-  int currentYoko1arg = map(leftVal - rightVal, -6000, 6000, 60, 120);
+  int currentYoko1arg = map(leftVal - rightVal, -6000, 6000, 45, 135);
   int currentYoko2arg = map(leftVal - rightVal, -6000, 6000, 60, 140);
 
-  int currentTate1arg = map(leftVal + rightVal, -6500, 8000, 0, 80);
+  int currentTate1arg = map(leftVal + rightVal, -6500, 8000, 30, 110);
   int currentTate2arg = map(leftVal + rightVal, -6000, 6500, 90, 120);
 
   const float T = 100;

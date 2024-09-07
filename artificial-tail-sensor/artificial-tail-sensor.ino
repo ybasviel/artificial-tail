@@ -11,8 +11,8 @@
 */
 
 
-#define LEFT
-//#define RIGHT
+//#define LEFT
+#define RIGHT
 
 static WiFiUDP udp;
 static const char *remoteIp = "192.168.4.1";
