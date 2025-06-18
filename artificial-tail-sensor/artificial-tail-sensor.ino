@@ -11,8 +11,8 @@
 */
 
 
-//#define LEFT
-#define RIGHT
+#define LEFT
+//#define RIGHT
 
 static WiFiUDP udp;
 static const char *remoteIp = "192.168.4.1";
@@ -81,6 +81,21 @@ void setup() {
   StickCP2.Display.printf("Right: %d\r\n", batteryPercentage);
 #endif
 
+
+  while (!StickCP2.BtnA.wasPressed()){
+    StickCP2.update();
+
+    StickCP2.Display.setCursor(0, 40);
+    StickCP2.Display.clear();
+
+#ifdef LEFT
+    StickCP2.Display.printf("Left: %d\r\n", batteryPercentage);
+#else
+    StickCP2.Display.printf("Right: %d\r\n", batteryPercentage);
+#endif
+    delay(800);
+  }
+
   static const int localPort = 5000;
 
   WiFi.begin(ssid, pass);
@@ -103,6 +118,9 @@ void setup() {
 
   // 接続完了の音
   StickCP2.Speaker.tone(4400, 500);
+
+  //pinMode(G32, ANALOG);
+  //pinMode(G33, ANALOG);
 }
 
 uint8_t data[5];
