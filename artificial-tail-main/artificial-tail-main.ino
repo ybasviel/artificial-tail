@@ -66,6 +66,18 @@ void IRAM_ATTR onTimer1() {
   int currentTate1arg = map(leftVal + rightVal, -6500, 8000, 30, 110);
   int currentTate2arg = map(leftVal + rightVal, -6000, 6500, 90, 120);
 
+  if ( currentYoko1arg < 45  ) currentYoko1arg = 45;
+  if ( 135 < currentYoko1arg ) currentYoko1arg = 135;
+
+  if ( currentYoko2arg < 45  ) currentYoko2arg = 45;
+  if ( 135 < currentYoko2arg ) currentYoko2arg = 135;
+
+  if ( currentTate1arg < 20  ) currentTate1arg = 20;
+  if ( 120 < currentTate1arg ) currentTate1arg = 120;
+
+  if ( currentTate2arg < 90  ) currentTate2arg = 90;
+  if ( 160 < currentTate2arg ) currentTate2arg = 160;
+
   const float T = 100;
   const float T_i = 500;
 
